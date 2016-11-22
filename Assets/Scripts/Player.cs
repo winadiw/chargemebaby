@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
-using UnityEngine.Networking;
+//using UnityEngine.Networking;
 using System.Collections;
 
-public class Player : NetworkBehaviour
+public class Player : MonoBehaviour
 {
     public Vector3 theScale;
     private Collider2D collider;
@@ -11,13 +11,12 @@ public class Player : NetworkBehaviour
 	private float speed = 0.7f;
 	public Transform groundCheck;
     public float currentCoolDown;
-    public float cooldown;
-
+	public float cooldown;
 
 	//Jump Variables
 	public bool grounded = false;
 	public Vector3 jumpSpeed;
-	public int jumpCount = 2;
+	public int jumpCount;
 
 	//Dash Attack Variables
 	public Vector3 dashSpeed;
@@ -32,7 +31,7 @@ public class Player : NetworkBehaviour
 		collider = GetComponent<Collider2D> ();
 		rigidBody = GetComponent<Rigidbody2D> ();
 
-		jumpSpeed = new Vector3 (0, 2.5f, 0);
+		//jumpSpeed = new Vector3 (0, 5f, 0);
 		dashSpeed = new Vector3 (0, 0, 0);
         currentCoolDown = cooldown;
     }
@@ -40,7 +39,7 @@ public class Player : NetworkBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-        if (!isLocalPlayer) return;
+        //if (!isLocalPlayer) return; KALAU MULTIPLAYER NYALAIN!
         if (Input.GetKeyDown(KeyCode.Space))
 		{
 			if (grounded || jumpCount > 0)
@@ -57,7 +56,7 @@ public class Player : NetworkBehaviour
 			isDashing = false;
 		}
 
-		isMidair ();
+		//isMidair ();
 		PlayerMove();
 		Debug.Log (rigidBody.velocity.x);
         if(currentCoolDown < cooldown)
@@ -164,13 +163,25 @@ public class Player : NetworkBehaviour
 				dashSpeed.x = 0;
 			}
 
-		/*}*/
 	}
 
+	public void OnCollisionEnter2D(Collision2D coll) 
+	{
+		if (coll.gameObject.tag == "Ground") 
+		{
+			grounded = true;
+			//if (grounded)   
+			jumpCount = 2;
+		}
+	}
+		
+	/*
+	//Pake cara lineCast
 	public void isMidair()
 	{
 		grounded = Physics2D.Linecast (transform.position, groundCheck.position, 1 << LayerMask.NameToLayer ("Ground"));
 		if (grounded)   
-			jumpCount = 2;
+			jumpCount = 1;
 	}
+	*/
 }

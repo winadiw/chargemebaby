@@ -44,7 +44,7 @@ GameObject:
   - 114: {fileID: 114000013813680380}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -56,7 +56,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013195539156}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.666, y: -0.37, z: 0}
+  m_LocalPosition: {x: -1.9944396, y: -0.9946046, z: 0}
   m_LocalScale: {x: 1.801846, y: 1.801846, z: 1.801846}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -70,7 +70,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011924754916}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.103, z: 0}
+  m_LocalPosition: {x: -0.06, y: -0.103, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -104,9 +104,9 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_Offset: {x: -0.0000000037252903, y: 0.004892722}
+  m_Offset: {x: -0.01969715, y: 0.004892729}
   serializedVersion: 2
-  m_Size: {x: 0.16236353, y: 0.17064355}
+  m_Size: {x: 0.08125791, y: 0.17064355}
 --- !u!95 &95000012499797998
 Animator:
   serializedVersion: 3
@@ -140,8 +140,8 @@ MonoBehaviour:
   currentCoolDown: 0
   cooldown: 2
   grounded: 1
-  jumpSpeed: {x: 0, y: 3, z: 0}
-  jumpCount: 1
+  jumpSpeed: {x: 0, y: 2.7, z: 0}
+  jumpCount: 2
   dashSpeed: {x: 0, y: 0, z: 0}
   isCharging: 0
   isDashing: 0
