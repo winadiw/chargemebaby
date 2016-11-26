@@ -145,6 +145,8 @@ MonoBehaviour:
   dashSpeed: {x: 0, y: 0, z: 0}
   isCharging: 0
   isDashing: 0
+  jumpSound: {fileID: 8300000, guid: f1f0448c5af14d34ab51d67a244f63a3, type: 3}
+  chargeSound: {fileID: 8300000, guid: e07df69a0dd406e4cba7d9987d155632, type: 3}
 --- !u!114 &114000011655186110
 MonoBehaviour:
   m_ObjectHideFlags: 1

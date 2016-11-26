@@ -24,6 +24,12 @@ public class Player : MonoBehaviour
 	public bool isDashing = false;
     Vector3 move;
 
+    //Sfx for Player
+   // public AudioClip moveSound;
+    public AudioClip jumpSound;
+    //public AudioClip attackSound;
+    public AudioClip chargeSound;
+
     // Use this for initialization
     void Start () 
 	{
@@ -48,7 +54,8 @@ public class Player : MonoBehaviour
 				grounded = false;	
 				animator.SetTrigger("PlayerJump");
 				--jumpCount;
-			}
+                SoundManager.instance.PlaySingle(jumpSound); //sfx for player jumping
+            }
 		}
 
 		if(rigidBody.velocity.x == 0)
@@ -85,6 +92,7 @@ public class Player : MonoBehaviour
                     {
                         animator.ResetTrigger("PlayerCharge");
                         animator.SetTrigger("PlayerMove");
+                        //SoundManager.instance.PlaySingle(moveSound); //sfx for player walking
                     }
 
                     else
@@ -105,6 +113,7 @@ public class Player : MonoBehaviour
                 if (grounded)
                 {
                     animator.SetTrigger("PlayerMove");
+                    //SoundManager.instance.PlaySingle(moveSound); //sfx for player walking
                 }
 
                 else
@@ -124,6 +133,7 @@ public class Player : MonoBehaviour
             {
                 animator.ResetTrigger("PlayerIdle");
                 animator.SetTrigger("PlayerCharge");
+                SoundManager.instance.PlaySingle(chargeSound); //sfx for player walking
             }
             else if (isDashing)
             {
@@ -133,6 +143,7 @@ public class Player : MonoBehaviour
             else if (!grounded)
             {
                 animator.SetTrigger("PlayerJump");
+                //SoundManager.instance.PlaySingle(jumpSound); //sfx for player jumping
             }
         }
 			
