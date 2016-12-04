@@ -9,7 +9,8 @@ public class Player : MonoBehaviour
 	private Rigidbody2D rigidBody;
 	private	Animator animator;
 	private float speed = 0.7f;
-	public Transform groundCheck;
+	public Transform startCast;
+	public Transform endCast;
     public float currentCoolDown;
 	public float cooldown;
 
@@ -23,6 +24,14 @@ public class Player : MonoBehaviour
 	public bool isCharging = false;
 	public bool isDashing = false;
     Vector3 move;
+	public bool attack = false;
+    public bool isDead = false;
+
+    //Sfx for Player
+    // public AudioClip moveSound;
+    public AudioClip jumpSound;
+    //public AudioClip attackSound;
+    public AudioClip chargeSound;
 
     // Use this for initialization
     void Start () 
@@ -39,28 +48,33 @@ public class Player : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-        //if (!isLocalPlayer) return; KALAU MULTIPLAYER NYALAIN!
-        if (Input.GetKeyDown(KeyCode.Space))
-		{
-			if (grounded || jumpCount > 0)
-			{
-				rigidBody.velocity = jumpSpeed;
-				grounded = false;	
-				animator.SetTrigger("PlayerJump");
-				--jumpCount;
-			}
-		}
-
+        Jump();
 		if(rigidBody.velocity.x == 0)
 		{
 			isDashing = false;
 		}
-
-		//isMidair ();
+			
+		isAttacking ();
 		PlayerMove();
-		Debug.Log (rigidBody.velocity.x);
+		//Debug.Log (rigidBody.velocity.x);
         if(currentCoolDown < cooldown)
             currentCoolDown += Time.deltaTime;
+    }
+
+    public void Jump()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (grounded || jumpCount > 0)
+            {
+                rigidBody.velocity = jumpSpeed;
+                grounded = false;
+                animator.SetTrigger("PlayerJump");
+                --jumpCount;
+                SoundManager.instance.PlaySingle(jumpSound); //sfx for player jumping
+            }
+        }
+
     }
 
     public void PlayerMove()
@@ -85,6 +99,7 @@ public class Player : MonoBehaviour
                     {
                         animator.ResetTrigger("PlayerCharge");
                         animator.SetTrigger("PlayerMove");
+                        //SoundManager.instance.PlaySingle(moveSound); //sfx for player walking
                     }
 
                     else
@@ -92,6 +107,11 @@ public class Player : MonoBehaviour
                 }
 
         }
+		else if (Input.GetKey (KeyCode.Z)) 
+		{
+			animator.SetTrigger ("PlayerDead");
+		}
+
         else if (Input.GetKey(KeyCode.A))
         {
             if (!isCharging && !isDashing)
@@ -105,6 +125,7 @@ public class Player : MonoBehaviour
                 if (grounded)
                 {
                     animator.SetTrigger("PlayerMove");
+                    //SoundManager.instance.PlaySingle(moveSound); //sfx for player walking
                 }
 
                 else
@@ -124,6 +145,7 @@ public class Player : MonoBehaviour
             {
                 animator.ResetTrigger("PlayerIdle");
                 animator.SetTrigger("PlayerCharge");
+                SoundManager.instance.PlaySingle(chargeSound); //sfx for player walking
             }
             else if (isDashing)
             {
@@ -133,55 +155,82 @@ public class Player : MonoBehaviour
             else if (!grounded)
             {
                 animator.SetTrigger("PlayerJump");
+                //SoundManager.instance.PlaySingle(jumpSound); //sfx for player jumping
             }
         }
-			
-			if(Input.GetMouseButton(0))
-			{
-				if(grounded && currentCoolDown>=cooldown)
-				{
-					isCharging = true;
-					if(dashSpeed.x <= 2.5f)
-						dashSpeed.x += 0.05f;
-                    
-                }
-			}
-
-			if (Input.GetMouseButtonUp(0))
-			{
-				if(grounded && currentCoolDown >= cooldown)
-				{
-					isCharging = false;
-					isDashing = true;
-					if(theScale.x < 0)
-						rigidBody.velocity = dashSpeed * -1;
-					else
-						rigidBody.velocity = dashSpeed;
-                    currentCoolDown = 0;
+        
+        if(Input.GetMouseButton(0))
+        {
+            if(grounded && currentCoolDown>=cooldown)
+            {
+                isCharging = true;
+                if(dashSpeed.x <= 2.5f)
+                    dashSpeed.x += 0.05f;
 
             }
-				dashSpeed.x = 0;
-			}
+        }
 
-	}
+        if (Input.GetMouseButtonUp(0))
+        {
+            if(grounded && currentCoolDown >= cooldown)
+            {
+                isCharging = false;
+                isDashing = true;
+                if(theScale.x < 0)
+                    rigidBody.velocity = dashSpeed * -1;
+                else
+                    rigidBody.velocity = dashSpeed;
+                currentCoolDown = 0;
 
-	public void OnCollisionEnter2D(Collision2D coll) 
-	{
-		if (coll.gameObject.tag == "Ground") 
-		{
-			grounded = true;
-			//if (grounded)   
-			jumpCount = 2;
-		}
-	}
-		
-	/*
-	//Pake cara lineCast
-	public void isMidair()
-	{
-		grounded = Physics2D.Linecast (transform.position, groundCheck.position, 1 << LayerMask.NameToLayer ("Ground"));
-		if (grounded)   
-			jumpCount = 1;
-	}
-	*/
+        }
+            dashSpeed.x = 0;
+        }
+
+    }
+
+    public void OnCollisionEnter2D(Collision2D coll) 
+{
+    if (coll.gameObject.tag == "Ground") 
+    {
+        grounded = true;
+        //if (grounded)   
+        jumpCount = 2;
+    }
+}
+
+    public void Kill(bool attacked)
+    {
+        if (attacked)
+        {
+            StartCoroutine(playerDead());
+        }
+    }
+
+    IEnumerator playerDead()
+    {
+        isDead = true;
+        animator.SetTrigger("PlayerDead");
+        yield return new WaitForSeconds(2f);
+        Destroy(gameObject);
+        //SoundManager.instance.destroyMusic();
+    }
+
+    //Pake cara lineCast
+    public void isAttacking()
+    {
+        /*
+        attack = Physics2D.Linecast (startCast.position, endCast.position, 1 << LayerMask.NameToLayer ("Enemy"));
+        if (attack && isDashing) 
+        {
+            Debug.Log ("Musuh Mati!");
+            SendMessageUpwards
+        }
+        */
+
+        RaycastHit2D hit = Physics2D.Raycast(startCast.position, endCast.position);
+        if (hit != false && hit.collider.name == "Enemy" && isDashing)
+        {
+            hit.collider.SendMessageUpwards("Kill", true);
+        }
+    }
 }
